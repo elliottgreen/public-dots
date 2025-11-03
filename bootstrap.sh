@@ -32,7 +32,7 @@ echo "[+] Detected environment: ${ENV_TYPE}"
 
 # ---- 1. Base system packages ----
 echo "[+] Installing base system packages..."
-pacman -Syu --noconfirm git stow sudo base-devel curl gnupg openssh pam_ssh_agent_auth
+pacman -Syu --noconfirm git stow sudo base-devel curl gnupg openssh pam_u2f
 
 # ---- 2. User setup ----
 if ! id -u "$USER" &>/dev/null; then
