@@ -46,6 +46,18 @@ show-config: ## Print resolved configuration variables
 setup-env: ## Run interactive environment setup script
 	@uv run python tools/env_setup.py
 
+.PHONY: test-make
+test-make: ## make test-make  → Run tests that validate Makefile targets and mocks
+	@echo "🧪 Running Makefile target tests..."
+	@if [ -d .venv ]; then \
+		. .venv/bin/activate; \
+	else \
+		echo "⚙️  Creating virtual environment with uv"; \
+		uv sync --all-groups; \
+		. .venv/bin/activate; \
+	fi; \
+	uv run pytest -v tests/test_make_targets.py
+
 .PHONY: test
 test: ## Run the pytest suite
 	@echo "Running test suite..."
@@ -62,6 +74,28 @@ lint: ## Run formatters and static analysis
 	@uv run ruff check .
 	@uv run black --check .
 	@uv run mypy arch_bootstrap/
+
+.PHONY: incus-run
+incus-run: ## Execute the bootstrap script inside the Incus test container
+	@echo "🧱 Running inside Incus container 'public-dots-test'..."
+	incus exec public-dots-test -- bash -lc "cd /root/public-dots && make run"
+
+.PHONY: run
+run: ## Run the main bootstrap script (loads .env and uses .venv)
+	@echo "🚀 Running main bootstrap script..."
+	@if [ -f .env ]; then \
+		echo "🔧 Loading environment from .env"; \
+		set -a; source .env; set +a; \
+	fi; \
+	if [ -d .venv ]; then \
+		echo "🐍 Using existing virtual environment"; \
+		. .venv/bin/activate; \
+	else \
+		echo "⚙️  Creating virtual environment with uv"; \
+		uv sync --all-groups; \
+		. .venv/bin/activate; \
+	fi; \
+	python arch_bootstrap/main.py
 
 .PHONY: clean
 clean: ## Remove cache and temporary files
