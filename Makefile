@@ -49,17 +49,15 @@ clean: ## Remove build and cache artifacts
 	@echo "==> Cleaning up..."
 	rm -rf __pycache__ */__pycache__ .pytest_cache .ruff_cache *.egg-info build dist
 
-.PHONY: env
-env: ## Print current environment variable values
-	@echo "BOOTSTRAP_USER        = $(BOOTSTRAP_USER)"
-	@echo "BOOTSTRAP_GITHUB_USER = $(BOOTSTRAP_GITHUB_USER)"
-	@echo "BOOTSTRAP_REPO_URL    = $(BOOTSTRAP_REPO_URL)"
+.PHONY: setup-env
+setup-env: ## Run interactive environment setup script
+	@command -v uv >/dev/null 2>&1 || { echo "Error: uv not found in PATH"; exit 1; }
+	@echo "==> Launching environment setup..."
+	@uv run python tools/env_setup.py
 
 .PHONY: setup-env
-setup-env: ## Show example export commands
-	@echo "export BOOTSTRAP_USER=$(BOOTSTRAP_USER)"
-	@echo "export BOOTSTRAP_GITHUB_USER=$(BOOTSTRAP_GITHUB_USER)"
-	@echo "export BOOTSTRAP_REPO_URL=$(BOOTSTRAP_REPO_URL)"
+setup-env: ## Run interactive environment setup script
+	@uv run python tools/env_setup.py
 
 .PHONY: incus-run
 incus-run: ## Run bootstrap inside an Incus container
