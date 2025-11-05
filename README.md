@@ -3,7 +3,6 @@
 ### Dots so far:
 - glow
 - zshrc
-- neovim
 
 ## Manual Method (For now)
 
@@ -78,6 +77,7 @@ Run as the new user (or use `sudo -u <username>`):
 
 1. Initialize a new Git repository in your desired directory: (we'll say 'dots')
    ```bash
+   mkdir dots
    git init
    ```
 
@@ -95,6 +95,12 @@ Run as the new user (or use `sudo -u <username>`):
    ```bash
    echo "path/to/your/directory/" >> .git/info/sparse-checkout
    ```
+   Or just edit it directly with the directory names you want on one line each.
+   por ejemplo:
+   > dotfiles
+   > dotfiles-homedir
+   > package-list
+
 
 5. Fetch and pull the specified directory(s):
    ```bash
@@ -106,12 +112,12 @@ Then for that folder:
 
 ```bash
 cd dots
-stow -t ~/.config .
+stow -t ~/.config dotfiles
 ```
 
 Then steps 4 $ 5 again for dots that have to be in the home folder:
 ```bash
 cd dots-home
-stow -t ~ .
+stow -t ~ dotfiles-homedir
 ```
 
