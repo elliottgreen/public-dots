@@ -1,50 +1,80 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 
-console_title_template: "{{ .Env.USERNAME}}@{{ .HostName}}"
+console_title_template: "{{ or .Env.USER .Env.USERNAME }}@{{ .HostName }}"
+
 blocks:
-- type: prompt
-  alignment: left
-  newline: true
-  segments:
-      - type: 'path'
-        # https://ohmyposh.dev/docs/segments/system/path
-        style: 'plain'
-        background: 'transparent'
-        foreground: 'blue'
+  # PYTHON VENV indicator (shows only when active)
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - type: python
+        style: diamond
+        foreground: "#206020"
+        leading_diamond: "⟨"      # simple diamond left
+        trailing_diamond: "⟩"     # simple diamond right
+        template: " {{ .Venv }} "
+        properties:
+          display_mode: context   # only show when inside a venv
+
+      # Reminder to activate if project looks like Python but venv not active
+      - type: python
+        style: plain
+        background: transparent
+        foreground: "#906cff"
+        template: "{{ if not .Venv }} (activate .venv) {{ end }}"
+        properties:
+          display_mode: files     # trigger only when certain files exist
+          files:
+            - ".venv"
+            - "pyproject.toml"
+            - "requirements.txt"
+
+  # PATH block
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - type: path
+        style: plain
+        background: transparent
+        foreground: blue
         template: '{{ .Path }}'
-- type: prompt
-  alignment: left
-  segments:
-      - type: 'git'
-        sytle: 'plain'
+
+  # GIT block
+  - type: prompt
+    alignment: left
+    segments:
+      - type: git
+        style: plain
         foreground: '#6c6c6c'
-        background: 'transparent'
-        template: ' {{ .HEAD }}{{   if or (.Working.Changed) (.Staging.Changed)}}*{{ end }}
-          <cyan>{{ if gt .Behind 0}}🡓 {{ end }}{{ if gt .Ahead 0}} 🡑 {{ end }}</>'
+        background: transparent
+        template: ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}🡓 {{ end }}{{ if gt .Ahead 0 }} 🡑 {{ end }}</>'
         properties:
           branch_icon: ''
           commit_icon: '@'
           fetch_status: true
 
-- type: prompt
-  alignment: left
-  newline: true
-  segments:
+  # STATUS block
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
       - type: status
-        # https://ohmyposh.dev/docs/segments/system/text
-        style: 'plain'
-        # foreground: 'blue'
-        foreground_templates: 
-          - '{{if gt .Code 0}}red{{end}}'
-          - '{{if eq .Code 0}}blue{{end}}'
+        style: plain
+        foreground_templates:
+          - '{{ if gt .Code 0 }}red{{ end }}'
+          - '{{ if eq .Code 0 }}blue{{ end }}'
         template: 'λ '
         properties:
           always_enabled: true
+
 transient_prompt:
   background: transparent
-  foreground_templates: 
-    - '{{if gt .Code 0}}red{{end}}'
-    - '{{if eq .Code 0}}blue{{end}}'
+  foreground_templates:
+    - '{{ if gt .Code 0 }}red{{ end }}'
+    - '{{ if eq .Code 0 }}blue{{ end }}'
   template: 'λ '
 
 version: 3
+

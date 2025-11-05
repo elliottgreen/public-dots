@@ -11,3 +11,4 @@ stow
 bat
 eza
 neofetch
+uv
