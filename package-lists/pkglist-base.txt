@@ -8,8 +8,8 @@ ghostty
 git
 gitleaks
 stow
+fzf
 bat
 eza
-neofetch
 uv
 yazi

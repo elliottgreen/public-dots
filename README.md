@@ -15,7 +15,8 @@ Your plan makes perfect sense — you can do each of those steps manually withou
 Assuming your package list is named `packages.txt` and has one package per line:
 
 ```bash
-sudo pacman -Syu --needed --noconfirm $(grep -v '^#' packages.txt | xargs)
+pacman -Syu --needed --noconfirm /
+$(grep -v '^#' package-lists/pkglist-base.txt | xargs)
 ```
 
 🟢 **Explanation**
@@ -38,8 +39,8 @@ xargs -a packages.txt sudo pacman -Syu --needed --noconfirm
 Replace `<username>` with your preferred name:
 
 ```bash
-sudo useradd -m -G wheel -s /bin/bash <username>
-sudo passwd <username>
+useradd -m -G wheel -s /bin/bash <username>
+passwd <username>
 ```
 
 Then enable sudo for the `wheel` group:
@@ -54,23 +55,25 @@ echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 
 ### **3. Install Paru (AUR helper)**
 
-Paru makes it easy to install both official and AUR packages.
+Paru is the *current* best method to install AUR packages.
+You'll need cargo to compile it, so install the **rust** package first. 
 
-sudo pacman -S --needed git base-devel
+```bash
+pacman -S rust
+su {user created earlier}
 git clone https://aur.archlinux.org/paru.git
 cd paru
 makepkg -si
+```
+
+Now install any AUR packages. 
+
+```bash
+paru -S $(grep -v '^#' package-lists/pkglist-aur.txt | xargs)
+```
 
 
-After installation, you can optionally set up a configuration file:
-
-mkdir -p ~/.config/paru
-wget https://raw.githubusercontent.com/katsuki-yuri/dots/master/.config/paru/paru.conf
-
-
-Paru works like pacman but adds AUR support and lets you review PKGBUILDs before installation.
-
-### **4. Clone your dotfiles repo and apply with GNU Stow**
+### **4. Clone JUST the dotfiles repo and apply with GNU Stow**
 
 Run as the new user (or use `sudo -u <username>`):
 > Note: This pulls just one directory (*or multiple*)
