@@ -13,3 +13,4 @@ bat
 eza
 uv
 yazi
+zsh

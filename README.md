@@ -111,14 +111,14 @@ Run as the new user (or use `sudo -u <username>`):
    git pull origin master
    ```
 
-Then for that folder:
+6. Setup Stow
 
 ```bash
 cd dots
 stow -t ~/.config dotfiles
 ```
 
-Then steps 4 $ 5 again for dots that have to be in the home folder:
+Then steps 4 & 5 again for dots that have to be in the home folder:
 ```bash
 cd dots-home
 stow -t ~ --dotfiles dotfiles-homedir
