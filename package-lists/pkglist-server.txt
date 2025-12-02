@@ -1,6 +1,17 @@
+sudo
+gdisk
 incus
 podman
 nvidia
+nvidia-utils
+nvidia-prime
 nvidia-container-toolkit
 linux
 linux-firmware
+btrfs-progs
+speedtest-cli
+fail2ban
+lynis
+net-tools
+bind-tools
+firewalld
