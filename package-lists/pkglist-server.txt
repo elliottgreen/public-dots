@@ -1,0 +1,6 @@
+incus
+podman
+nvidia
+nvidia-container-toolkit
+linux
+linux-firmware
