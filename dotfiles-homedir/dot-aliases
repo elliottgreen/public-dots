@@ -34,6 +34,61 @@ alias pm='podman'
 alias podman='podman --cgroup-manager cgroupfs --events-backend file'
 alias podsock='sudo systemctl start podman.socket'
 
+#### Taskwarrior 
+# CORE ALIASES
+# Base command shortcut
+alias t='task'                    # Shortens "task" to "t"
+# Add new task
+alias ta='task add'               # Quickly add a task
+# Mark task as done
+alias td='task done'              # Complete a task
+# Modify a task
+alias tm='task modify'            # Modify attributes like due, priority
+# Show next urgent task (clears screen first)
+alias tn='clear; task next'       # Clean view of next tasks
+
+# ADVANCED TASK CHAINING
+# Add a task that depends on the most recently added task
+alias tal='task add dep:"$(task +LATEST uuids)"'
+# Example:
+# tal "Buy groceries"
+# tal "Go to store"
+# Second task depends on the first
+# CONTEXT SWITCHING
+# Show current context
+alias tc='task context'
+# Disable context temporarily
+alias tt='task rc.context=none'
+# Quick context switching
+alias tadm='task context admin'
+alias tfam='task context family'
+alias tlab='task context lab'
+# TIME MANAGEMENT
+# Delay a task until tomorrow without confirmation
+tw() {
+    task "$1" rc.recurrence.confirmation=off modify wait:tomorrow
+}
+# Usage: tw 12
+# Delays task ID 12 until tomorrow
+# Launch Taskwarrior TUI
+alias tui='taskwarrior-tui'
+# List overdue tasks
+alias tdd='task +OVERDUE list'
+# Read next task aloud (requires festival installed)
+alias tnv='task next rc.verbose=nothing | festival --tts'
+# Desktop notification for next task (Linux notify-send)
+alias tnn='notify-send "$(task next rc.verbose=nothing)"'
+###############################################################################
+# TIMEWARRIOR INTEGRATION
+###############################################################################
+# Start tracking time for a call
+twcall() {
+    timew start call "$1"
+}
+# Usage:
+# twcall "Client Review"
+###############################################################################
+
 #### Misc. aliases
 alias 411='sha256sum'
 alias cat='bat'

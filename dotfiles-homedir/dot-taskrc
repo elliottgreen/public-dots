@@ -1,0 +1,86 @@
+# Taken from default config file at install. 
+# Combined with Jessica Chandler's taskrc post from 2018
+###############################################################################
+# Core Behavior
+###############################################################################
+data.location=~/.task
+
+# Show the tracking of time
+journal.time=on
+
+# Shortcuts
+alias.dailystatus=status:completed end.after:today all
+alias.punt=modify wait:1d
+alias.someday=mod +someday wait:someday
+
+# default start on Sunday - Let's try Monday for a while
+weekstart=monday
+
+# Make searches case insensitive
+search.case.sensitive=no
+
+# Set daily burndown as default
+# alias.burndown=burndown.daily
+
+# Indicate the active task in reports
+active.indicator=>
+
+# task ready report default with custom columns
+default.command=ready
+
+report.ready.columns=id,start.active,depends.indicator,project,due.relative,description.desc
+report.ready.labels= ,,Depends, Project, Due, Description
+#if none of the tasks in a report have a particular column, it will not show in the report
+
+# Show confirmation prompts for destructive actions (safety feature)
+confirmation=1
+
+# Automatically detect recurring tasks without requiring confirmation
+recurrence.confirmation=1
+
+# Display verbose output by default (can be overridden per command)
+verbose=default
+
+###############################################################################
+# Custom Reports
+###############################################################################
+# Show next report as default when simply running `task`
+report.next.filter=status:pending
+report.next.sort=urgency-
+report.next.columns=id,project,priority,due.relative,description
+report.next.labels=ID,Project,Pri,Due,Description
+
+
+# Overdue report (used by alias tdd)
+report.overdue.filter=status:pending and +OVERDUE
+report.overdue.sort=due+
+report.overdue.columns=id,project,priority,due,description
+report.overdue.labels=ID,Project,Pri,Due,Description
+
+###############################################################################
+# Context Sets
+###############################################################################
+
+# Common Task Contexts
+context.admin=project:Admin
+context.lab=project:Lab
+
+###############################################################################
+# Urgency Tweaks
+###############################################################################
+
+# Increase urgency weight for due tasks
+urgency.due.coefficient=12.0
+
+# Increase urgency weight for high priority
+urgency.priority.H.coefficient=6.0
+
+###############################################################################
+# Visual Tweaks
+###############################################################################
+
+# Enable colored output
+color=on
+
+# Highlight overdue tasks
+color.overdue=bold red
