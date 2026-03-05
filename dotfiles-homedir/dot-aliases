@@ -40,12 +40,36 @@ alias podsock='sudo systemctl start podman.socket'
 alias t='task'                    # Shortens "task" to "t"
 # Add new task
 alias ta='task add'               # Quickly add a task
+# Show the task calendar
+alias tcal='task calendar'
 # Mark task as done
 alias td='task done'              # Complete a task
 # Modify a task
 alias tm='task modify'            # Modify attributes like due, priority
 # Show next urgent task (clears screen first)
 alias tn='clear; task next'       # Clean view of next tasks
+# Show a summary of recent task completion
+alias ts='task summary'
+# active - Started tasks
+alias tla='task active'
+# completed - Tasks that have been completed
+alias tlc='task completed'
+# blocked - Tasks that are blocked by other tasks
+alias tlb='task blocked'
+# overdue - Overdue tasks
+alias tlo='task overdue'
+# recurring - Pending recurring tasks
+alias tlr='task recurring'
+# waiting - Hidden, waiting tasks
+alias tlw='task waiting'
+# project - List local projects
+alias tlp='task project'
+# history - ghistory actually 
+alias tlh='task ghistory'
+# brundown daily
+alias tbd='task burndown daily'
+# undue - undo whatever you did last. can be repeated
+alias tu='task undue'
 
 # ADVANCED TASK CHAINING
 # Add a task that depends on the most recently added task
