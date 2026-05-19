@@ -1,11 +1,11 @@
-Host github-work
+Host github-work-yk
   HostName github.com 
   User git 
   IdentityFile ~/keys/WORK_SSH_FY26_01_784.stub
   IdentitiesOnly yes 
   IdentityAgent none
 
-Host github-personal
+Host github-personal-yk
   HostName github.com 
   User git 
   IdentityFile ~/keys/PERSONAL_SSH_01_784.stub
