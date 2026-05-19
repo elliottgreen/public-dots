@@ -1,0 +1,17 @@
+[commit]
+	gpgsign = true
+[gpg]
+	program = /usr/bin/gpg
+[init]
+	defaultBranch = main
+[user]
+	name = #TODO
+	email = #TODO
+	signingkey = 0x232BE2332A2095F8A6226AD9334C2DABEB2A6CF1
+	useConfigOnly = true
+[credential]
+	helper = cache
+[status]
+	ShowUntrackedFiles = no
+[core]
+	editor = nvim
