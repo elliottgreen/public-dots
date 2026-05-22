@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+dotfiles_dir="$repo_root/dotfiles"
+home_dir="${HOME}"
+
+cd "$repo_root"
+
+# Only do work if files under dotfiles/ changed in the merge/pull.
+if ! git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD |
+  grep -q '^dotfiles/'; then
+  exit 0
+fi
+
+echo "[dotfiles] Changes detected under dotfiles/. Re-applying stow links..."
+
+if ! command -v stow >/dev/null 2>&1; then
+  echo "[dotfiles] ERROR: GNU stow is not installed or not in PATH." >&2
+  exit 1
+fi
+
+# Re-stow only changed top-level dotfile packages.
+git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD |
+  awk -F/ '/^dotfiles\/[^/]+\// { print $2 }' |
+  sort -u |
+  while read -r package; do
+    [ -z "$package" ] && continue
+
+    if [ -d "$dotfiles_dir/$package" ]; then
+      echo "[dotfiles] Restowing package: $package"
+      stow \
+        --dir="$dotfiles_dir" \
+        --target="$home_dir" \
+        --restow \
+        "$package"
+    fi
+  done
+
+echo "[dotfiles] Done."
