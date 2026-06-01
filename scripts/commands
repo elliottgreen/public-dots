@@ -1,0 +1,259 @@
+#!/bin/zsh 
+# commands
+
+# Start recording with Asciinema and pass a title
+arec() {
+  local title="${1:-$(date)}"
+  asciinema rec -i 2 -t "$title" "$HOME/Videos/Shell-Caps/asciinema/${title}.cast"
+}
+
+aplay() {
+  asciinema play "$HOME/Videos/Shell-Caps/asciinema/$1.cast"
+}
+
+# ───────────────────────────────────────────────
+# OpenSSH Agent for Ansible + YubiKey
+# ───────────────────────────────────────────────
+#start_ansible_agent() {
+#  export ANSIBLE_SSH_AUTH_SOCK="$HOME/.ssh/agent-ansible.sock"
+#
+#  # Start the agent if it’s not running
+#  if ! ssh-add -l >/dev/null 2>&1; then
+#    echo "🔐 Starting Ansible SSH agent..."
+#    eval "$(ssh-agent -a $ANSIBLE_SSH_AUTH_SOCK -s)" >/dev/null
+#    ssh-add ~/.ssh/omar.priv >/dev/null 2>&1 && echo "✅ YubiKey key added."
+#  else
+#    echo "✅ Ansible SSH agent already active."
+#  fi
+#}
+
+# ───────────────────────────────────────────────
+# start_ansible_agent — for Ansible/YubiKey sessions
+# ───────────────────────────────────────────────
+start_ansible_agent() {
+  export ANSIBLE_SSH_AUTH_SOCK="$HOME/.ssh/agent-ansible.sock"
+
+  # Start or reuse agent
+  if [ ! -S "$ANSIBLE_SSH_AUTH_SOCK" ]; then
+    echo "🚀 Starting new Ansible SSH agent..."
+    eval "$(ssh-agent -a $ANSIBLE_SSH_AUTH_SOCK -s)" >/dev/null
+  fi
+
+  # Load key only when requested
+  if command -v load_ansible_key.sh >/dev/null 2>&1; then
+    ~/scripts/load_ansible_key.sh
+  else
+    echo "⚠️  load_ansible_key.sh not found. Please add it to ~/scripts/"
+  fi
+
+  export SSH_AUTH_SOCK="$ANSIBLE_SSH_AUTH_SOCK"
+  echo "✅ Ansible SSH agent ready at $SSH_AUTH_SOCK"
+}
+
+# ───────────────────────────────────────────────
+# Firewall ops
+# ───────────────────────────────────────────────
+
+# Firewall helper functions for the local nftables workstation ruleset.
+#
+# These helpers assume:
+#   - the active ruleset is loaded from /etc/nftables.conf
+#   - the main nftables table is named: inet workstation
+#   - the table contains the sets and chains we discussed earlier
+#
+# Bash comments begin with '#'. There is no separate block comment syntax,
+# so the normal way to add "verbose comments" in shell is to place one or
+# more '#' lines above the function or command being explained.
+#
+# Suggested usage:
+#   source this file from your shell rc file, or source it manually:
+#     source /path/to/fw-helpers-commented
+#
+# Note:
+#   These functions are thin wrappers around 'nft'. They do not do argument
+#   validation yet, so they expect a sensible value in $1.
+#
+#   Examples:
+#     fw-open 8888
+#     fw-close 8888
+#     fw-egress-open 10.10.10.23
+#     fw-egress-close 10.10.10.23
+
+# Validate the currently deployed nftables configuration file.
+#
+# What it does:
+#   Runs nft in "check only" mode against /etc/nftables.conf.
+#
+# Why this is useful:
+#   Use this before reloading the firewall after editing files. It lets you
+#   catch syntax or include errors without actually replacing the live ruleset.
+#
+# Scope:
+#   This checks the deployed config in /etc, not the copy in your Git repo.
+#
+# Example:
+#   fw-check
+fw-check() {
+  sudo nft --check -f /etc/nftables.conf
+}
+
+# Reload the active firewall from /etc/nftables.conf.
+#
+# What it does:
+#   Re-applies the nftables rules currently stored in /etc/nftables.conf and
+#   any included fragment files.
+#
+# Why this is useful:
+#   After deploying updated firewall files into /etc, this is the quick way to
+#   make the running firewall match the on-disk configuration.
+#
+# Caution:
+#   This changes the live firewall immediately. It is safest to run fw-check
+#   first when you have edited the rules.
+#
+# Example:
+#   fw-reload
+fw-reload() {
+  sudo nft -f /etc/nftables.conf
+}
+
+# Temporarily expose a TCP port on the workstation to systems on your LAN.
+#
+# What it does:
+#   Adds the provided TCP port number to the nftables set:
+#     inet workstation temp_lan_tcp
+#
+# Why this matters:
+#   The INPUT chain uses that set to decide which inbound TCP ports should be
+#   reachable from trusted LAN addresses. This affects traffic TO the host.
+#
+# Typical use case:
+#   You start a temporary service on the workstation itself, such as Jupyter,
+#   a demo web UI, or a test API, and want another machine on your local
+#   network to reach it.
+#
+# Example:
+#   fw-open 8888
+#
+# After that, a trusted LAN client can connect to the workstation on TCP/8888
+# if the service is actually listening there.
+fw-open() {
+  sudo nft add element inet workstation temp_lan_tcp "{ $1 }"
+}
+
+# Remove a previously opened temporary TCP port from LAN access.
+#
+# What it does:
+#   Deletes the provided TCP port number from the nftables set:
+#     inet workstation temp_lan_tcp
+#
+# Why this matters:
+#   This closes a temporary inbound exception that was previously added with
+#   fw-open. This affects traffic TO the host.
+#
+# Typical use case:
+#   You are done using Jupyter, a dashboard, or another temporary service and
+#   want to return to the default deny posture for inbound LAN access.
+#
+# Example:
+#   fw-close 8888
+fw-close() {
+  sudo nft delete element inet workstation temp_lan_tcp "{ $1 }"
+}
+
+# Show the current nftables workstation table.
+#
+# What it does:
+#   Prints the active definition of the table:
+#     inet workstation
+#
+# Why this is useful:
+#   This is a quick inspection command for verifying sets, chains, counters,
+#   and currently loaded rules without dumping the entire system ruleset.
+#
+# Typical use case:
+#   Use this after opening a port or allowing egress so you can confirm that
+#   the expected element was added to the correct set.
+#
+# Example:
+#   fw-list
+fw-list() {
+  sudo nft list table inet workstation
+}
+
+# Temporarily allow an IPv4 address or subnet to be forwarded through the host.
+#
+# What it does:
+#   Adds the provided IPv4 address or subnet to the nftables set:
+#     inet workstation allowed_forward_v4
+#
+# Why this matters:
+#   The FORWARD chain uses that set to decide which source addresses are
+#   allowed to route THROUGH the workstation. This does not expose a service on
+#   the host itself. Instead, it permits selected guest/container traffic to be
+#   forwarded onward, typically toward the internet.
+#
+# Typical use case:
+#   An Incus guest normally has no internet access because forwarding is
+#   default-deny. You temporarily allow one guest IP, or an entire guest subnet,
+#   so it can install packages or fetch updates.
+#
+# Examples:
+#   fw-egress-open 10.10.10.23
+#   fw-egress-open 10.10.10.0/24
+fw-egress-open() {
+  sudo nft add element inet workstation allowed_forward_v4 "{ $1 }"
+}
+
+# Remove a previously granted forwarding/egress exception.
+#
+# What it does:
+#   Deletes the provided IPv4 address or subnet from the nftables set:
+#     inet workstation allowed_forward_v4
+#
+# Why this matters:
+#   This removes a temporary forwarding allowance, returning that guest or
+#   subnet to the default deny behavior in the FORWARD chain.
+#
+# Typical use case:
+#   A container or VM has finished installing packages, and you want to revoke
+#   its temporary internet access.
+#
+# Examples:
+#   fw-egress-close 10.10.10.23
+#   fw-egress-close 10.10.10.0/24
+fw-egress-close() {
+  sudo nft delete element inet workstation allowed_forward_v4 "{ $1 }"
+}
+
+# ------------------------------------------------------------
+# Chromecast / mDNS / SSDP helpers
+#
+# These temporarily allow multicast UDP traffic needed for
+# device discovery (e.g., Chromecast, smart TVs, speakers).
+#
+# Uses:
+#   mDNS  -> UDP 5353 (224.0.0.251 / ff02::fb)
+#   SSDP  -> UDP 1900 (239.255.255.250)
+#
+# This only affects INPUT (host discovery), not forwarding.
+# Safe for LAN use; not exposed to the internet.
+# ------------------------------------------------------------
+
+fw-cast-open() {
+  # Allow multicast discovery traffic (Chromecast, etc.)
+  sudo nft add element inet workstation temp_udp_services "{ 5353, 1900 }"
+}
+
+fw-cast-close() {
+  # Remove multicast discovery allowance
+  sudo nft delete element inet workstation temp_udp_services "{ 5353, 1900 }"
+}
+
+fw-off() {
+  sudo nft flush ruleset
+}
+
+fw-on() {
+  sudo nft -f /etc/nftables.conf
+}
