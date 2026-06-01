@@ -111,7 +111,7 @@ Run as the new user (or use `sudo -u <username>`):
    git pull origin master
    ```
 
-6. Setup Stow
+### 5 Setup Stow
 
 ```bash
 cd dots
@@ -122,5 +122,25 @@ Then steps 4 & 5 again for dots that have to be in the home folder:
 ```bash
 cd dots-home
 stow -t ~ --dotfiles dotfiles-homedir
+```
+
+Note: after initial setup, run this:
+```{sh}
+$ uv run -m arch_bootstrap:repo
+```
+```
+```
+
+This will register the githooks repo locally and then the hook will update stow after each pull. 
+
+
+### 6 Setup GPG 
+
+Assuming key is plugged in and `opensc` is installed
+
+```{sh}
+$ gpg --import keys/{current-public-key.asc}
+$ gpg --card-status
+$ gpg --list-secret-keys --keyid-format long
 ```
 
