@@ -16,5 +16,12 @@
         }
       }
     }
-  }
+  },
+  "mcp": {
+    "Drawio": {
+      "type": "remote",
+      "url": "https://jira.example.com/mcp",
+      "enabled": true
+    },
+  },
 }
