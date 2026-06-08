@@ -13,6 +13,9 @@ source "$ZINIT_HOME/zinit.zsh"
 # Include alias file
 [[ -f ~/.aliases ]] && source ~/.aliases
 
+# Include commands file
+[[ -f ~/pkgs/public-dots/scripts/commands ]] && source ~/pkgs/public-dots/scripts/commands
+
 # Zsh plugins
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
