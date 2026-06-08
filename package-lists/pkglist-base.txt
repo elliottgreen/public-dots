@@ -6,6 +6,7 @@ ghostty
 git
 gitleaks
 glow
+just
 lazygit
 neovim
 nushell
