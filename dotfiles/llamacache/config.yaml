@@ -1,0 +1,124 @@
+# ~/.config/llamastash/config.yaml
+#
+# Override with:
+#   LLAMASTASH_CONFIG=/path/to/config.yaml
+#   llamastash --config /path/to/config.yaml
+
+theme: macchiato
+
+# Extra recursive GGUF search paths.
+# Update this to wherever you keep your local GGUF models.
+model_paths:
+  - /mnt/models/gguf
+
+# Cache discovery.
+# Keep Hugging Face/Ollama enabled if you use those caches.
+# Disable LM Studio unless you actually use it.
+disable_default_cache_paths:
+  huggingface: false
+  ollama: false
+  lm_studio: true
+
+# Set true only if all models are in model_paths and you do not want cache scanning.
+disable_scan: false
+
+# Internal llama-server launch port range.
+port_range:
+  start: 41100
+  end: 41300
+
+# Omit to use llama-server from $PATH.
+# llama_server_path: /usr/local/bin/llama-server
+
+# Larger models may need more time to load before health checks pass.
+probe_timeout_secs: 300
+
+# Keep false to preserve normal terminal mouse selection/copy behavior.
+mouse_focus: false
+
+proxy:
+  # OpenAI-compatible endpoint for OpenCode:
+  #   http://127.0.0.1:11435/v1
+  enabled: true
+  ollama_compat: false
+  port: 11435
+
+  # Disable fallback so OpenCode does not silently receive a response
+  # from the wrong model if the requested model fails to start.
+  fallback_enabled: false
+
+  header_read_timeout_secs: 30
+
+  # 1800 = 30 minutes. Set to 0 to keep proxy-started models loaded indefinitely.
+  idle_ttl_secs: 1800
+
+# Optional keybinding overrides.
+keybindings: {}
+
+# Architecture-level launch defaults.
+#
+# Precedence:
+# preset > last_params > arch_defaults > built-in table > llama-server defaults
+#
+# Keep these conservative for OpenCode multi-model testing.
+arch_defaults:
+  qwen3:
+    ctx: 8192
+    parallel: 1
+    n_gpu_layers: 99
+    flash_attn: true
+    cache_type_k: q8_0
+    cache_type_v: q8_0
+    mlock: false
+    no_mmap: false
+    reasoning: false
+
+  qwen2:
+    ctx: 8192
+    parallel: 1
+    n_gpu_layers: 99
+    flash_attn: true
+    cache_type_k: q8_0
+    cache_type_v: q8_0
+    mlock: false
+    no_mmap: false
+
+  gemma:
+    ctx: 4096
+    parallel: 1
+    n_gpu_layers: 99
+    flash_attn: true
+    cache_type_k: q8_0
+    cache_type_v: q8_0
+    mlock: false
+    no_mmap: false
+
+  gemma3:
+    ctx: 4096
+    parallel: 1
+    n_gpu_layers: 99
+    flash_attn: true
+    cache_type_k: q8_0
+    cache_type_v: q8_0
+    mlock: false
+    no_mmap: false
+
+  llama:
+    ctx: 4096
+    parallel: 1
+    n_gpu_layers: 99
+    flash_attn: true
+    cache_type_k: q8_0
+    cache_type_v: q8_0
+    mlock: false
+    no_mmap: false
+
+  llama3:
+    ctx: 4096
+    parallel: 1
+    n_gpu_layers: 99
+    flash_attn: true
+    cache_type_k: q8_0
+    cache_type_v: q8_0
+    mlock: false
+    no_mmap: false

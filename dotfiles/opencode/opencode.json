@@ -1,27 +1,165 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  // Active defaults for this test:
+  // - Big reasoning/build/review model: Qwen3.6 28B
+  // - Small planning/shell/reporting model: Qwen3 14B
+  "model": "llamacpp-qwen36-28b/qwen36-28b-reap20-a3b-q4km",
+  "small_model": "llamacpp-qwen3-14b/qwen3-14b-q4km",
+  "default_agent": "build-local",
   "provider": {
-    "ollama": {
+    "llamacpp-qwen36-28b": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (local)",
+      "name": "llama.cpp - Qwen3.6 28B REAP20 A3B",
       "options": {
-        "baseURL": "http://192.168.1.170:11434/v1"
+        "baseURL": "http://127.0.0.1:8080/v1"
       },
       "models": {
-        "qwen3:0.8b": {
-          "name": "qwen3 0.8b"
-        },
-        "qwen3-coder:latest": {
-          "name": "qwen3coder 16b"
+        "qwen36-28b-reap20-a3b-q4km": {
+          "name": "Qwen3.6 28B REAP20 A3B Q4_K_M",
+          "limit": {
+            "context": 8192,
+            "output": 2048
+          }
+        }
+      }
+    },
+    "llamacpp-qwen3-14b": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama.cpp - Qwen3 14B",
+      "options": {
+        "baseURL": "http://127.0.0.1:8081/v1"
+      },
+      "models": {
+        "qwen3-14b-q4km": {
+          "name": "Qwen3 14B Q4_K_M",
+          "limit": {
+            "context": 8192,
+            "output": 1536
+          }
+        }
+      }
+    },
+    "llamacpp-gemma4-12b": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama.cpp - Gemma 4 12B",
+      "options": {
+        "baseURL": "http://127.0.0.1:8082/v1"
+      },
+      "models": {
+        "gemma4-12b-it-q4km": {
+          "name": "Gemma 4 12B IT Q4_K_M",
+          "limit": {
+            "context": 4096,
+            "output": 1024
+          }
+        }
+      }
+    },
+    "llamacpp-llama13b": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama.cpp - Llama 13B",
+      "options": {
+        "baseURL": "http://127.0.0.1:8083/v1"
+      },
+      "models": {
+        "llama13b-q4km": {
+          "name": "Llama 13B Q4_K_M",
+          "limit": {
+            "context": 4096,
+            "output": 1024
+          }
+        }
+      }
+    },
+    "llamacpp-llama7b": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama.cpp - Llama 7B",
+      "options": {
+        "baseURL": "http://127.0.0.1:8084/v1"
+      },
+      "models": {
+        "llama7b-q4km": {
+          "name": "Llama 7B Q4_K_M",
+          "limit": {
+            "context": 2048,
+            "output": 768
+          }
         }
       }
     }
   },
-  "mcp": {
-    "Drawio": {
-      "type": "remote",
-      "url": "https://jira.example.com/mcp",
-      "enabled": true
+  "agent": {
+    "build-local": {
+      "description": "Primary local implementation agent using the larger Qwen reasoning model.",
+      "mode": "primary",
+      "model": "llamacpp-qwen36-28b/qwen36-28b-reap20-a3b-q4km",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask"
+      }
     },
-  },
+    "plan-local": {
+      "description": "Local planning and shell-work agent using the smaller Qwen model.",
+      "mode": "primary",
+      "model": "llamacpp-qwen3-14b/qwen3-14b-q4km",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "shell-worker-local": {
+      "description": "Bounded zsh/devops worker for safe command planning, repo inspection, reports, and dashboard rendering.",
+      "mode": "subagent",
+      "model": "llamacpp-qwen3-14b/qwen3-14b-q4km",
+      "permission": {
+        "edit": "ask",
+        "bash": "ask"
+      }
+    },
+    "explore-local": {
+      "description": "Read-only repository exploration and summarization using the smaller Qwen model.",
+      "mode": "subagent",
+      "model": "llamacpp-qwen3-14b/qwen3-14b-q4km",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "review-local": {
+      "description": "Higher-quality implementation review using the larger Qwen model.",
+      "mode": "subagent",
+      "model": "llamacpp-qwen36-28b/qwen36-28b-reap20-a3b-q4km",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "plan-gemma-local": {
+      "description": "Alternate planning agent using Gemma 4 12B.",
+      "mode": "primary",
+      "model": "llamacpp-gemma4-12b/gemma4-12b-it-q4km",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "plan-llama13b-local": {
+      "description": "Alternate planning agent using Llama 13B.",
+      "mode": "primary",
+      "model": "llamacpp-llama13b/llama13b-q4km",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "plan-llama7b-local": {
+      "description": "Alternate lightweight planning agent using Llama 7B.",
+      "mode": "primary",
+      "model": "llamacpp-llama7b/llama7b-q4km",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    }
+  }
 }
