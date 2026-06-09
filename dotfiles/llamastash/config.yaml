@@ -60,6 +60,7 @@ keybindings: {}
 # Precedence:
 # preset > last_params > arch_defaults > built-in table > llama-server defaults
 #
+#
 # Keep these conservative for OpenCode multi-model testing.
 arch_defaults:
   qwen3:
