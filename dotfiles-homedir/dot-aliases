@@ -117,6 +117,7 @@ twcall() {
 alias 411='sha256sum'
 alias cat='bat'
 alias cl='clear'
+alias dots="find ~ -maxdepth 2 -type l -printf '%p  -> %l\n'"
 alias down='poweroff'
 alias glw='glow'
 alias lg='lazygit'
