@@ -2,39 +2,60 @@
 set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"
-dotfiles_dir="$repo_root/dotfiles"
-home_dir="${HOME}"
+config_dotfiles_dir="$repo_root/dotfiles"
+home_dotfiles_dir="$repo_root/dotfiles-homedir"
 
 cd "$repo_root"
 
-# Only do work if files under dotfiles/ changed in the merge/pull.
-if ! git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD |
-  grep -q '^dotfiles/'; then
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+config_changed=false
+home_changed=false
+
+if printf '%s\n' "$changed_files" | grep -q '^dotfiles/'; then
+  config_changed=true
+fi
+
+if printf '%s\n' "$changed_files" | grep -q '^dotfiles-homedir/'; then
+  home_changed=true
+fi
+
+if [ "$config_changed" = false ] && [ "$home_changed" = false ]; then
   exit 0
 fi
 
-echo "[dotfiles] Changes detected under dotfiles/. Re-applying stow links..."
-
 if ! command -v stow >/dev/null 2>&1; then
-  echo "[dotfiles] ERROR: GNU stow is not installed or not in PATH." >&2
+  echo "[dotfiles] ERROR: GNU Stow is not installed or not in PATH." >&2
   exit 1
 fi
 
-# Re-stow only changed top-level dotfile packages.
-git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD |
-  awk -F/ '/^dotfiles\/[^/]+\// { print $2 }' |
-  sort -u |
-  while read -r package; do
-    [ -z "$package" ] && continue
+if [ "$config_changed" = true ]; then
+  if [ ! -d "$config_dotfiles_dir" ]; then
+    echo "[dotfiles] ERROR: dotfiles directory not found: $config_dotfiles_dir" >&2
+    exit 1
+  fi
 
-    if [ -d "$dotfiles_dir/$package" ]; then
-      echo "[dotfiles] Restowing package: $package"
-      stow \
-        --dir="$dotfiles_dir" \
-        --target="$home_dir" \
-        --restow \
-        "$package"
-    fi
-  done
+  mkdir -p "$HOME/.config"
+
+  echo "[dotfiles] Re-applying ~/.config dotfiles..."
+  stow \
+    --target="$HOME/.config" \
+    --restow \
+    dotfiles
+fi
+
+if [ "$home_changed" = true ]; then
+  if [ ! -d "$home_dotfiles_dir" ]; then
+    echo "[dotfiles] ERROR: dotfiles-homedir directory not found: $home_dotfiles_dir" >&2
+    exit 1
+  fi
+
+  echo "[dotfiles] Re-applying home-directory dotfiles..."
+  stow \
+    --target="$HOME" \
+    --dotfiles \
+    --restow \
+    dotfiles-homedir
+fi
 
 echo "[dotfiles] Done."
