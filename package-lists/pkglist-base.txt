@@ -12,6 +12,7 @@ neovim
 nushell
 openssh
 stow
+systemctl-tui
 task
 timew
 uv

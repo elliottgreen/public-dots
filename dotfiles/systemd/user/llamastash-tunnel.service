@@ -1,0 +1,14 @@
+[Unit]
+Description=SSH tunnel to remote LlamaStash proxy
+Documentation=man:ssh(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ssh -N -T llamastash-tunnel
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
