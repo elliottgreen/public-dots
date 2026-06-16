@@ -29,15 +29,15 @@
         "Qwen3.6-28B-REAP20-A3B-Q8_0": {
           "name": "Qwen3.6 28B REAP20 A3B Q8_0",
           "limit": {
-            "context": 8192,
-            "output": 2048
+            "context": 32768,
+            "output": 4096
           }
         },
         "Qwen3-14B-Q4_K_M": {
           "name": "Qwen3 14B Q4_K_M",
           "limit": {
-            "context": 8192,
-            "output": 1536
+            "context": 16384,
+            "output": 2048
           }
         },
         "gemma-4-21b-a4b-it-REAP-Q4_K_M": {

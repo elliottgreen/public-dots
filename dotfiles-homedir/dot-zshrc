@@ -67,13 +67,15 @@ eval "$(zoxide init --cmd cd zsh)"
 eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/zen2.yaml)"
 
 # add agent forwarding
-eval "$(ssh-agent -s)"
+# eval "$(ssh-agent -s)"
+# TODO Remove if not good
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
 # ENV Variables
 export EDITOR='nvim'
 
 # WSL helper
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-export XDG_RUNTIME_DIR=/tmp/runtime-$USER
+# export LANG=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
+# export XDG_RUNTIME_DIR=/tmp/runtime-$USER
 

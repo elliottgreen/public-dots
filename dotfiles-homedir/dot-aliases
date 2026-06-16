@@ -1,8 +1,14 @@
 
 #### 'Go' codes ;-) 
+alias goblue='sudo systemctl unmask bluetooth && sudo systemctl start bluetooth'
+alias gocock='sudo systemctl start cockpit.socket'
+alias gocups='sudo systemctl start ahavi-daemon && sudo systemctl start cups'
 alias goram='sudo mount -t ramfs -o size=512m ramfs $HOME/working/ramdisk && sudo chown -R `whoami`:`whoami` $HOME/working/ramdisk'
+alias goinc='sudo systemctl start incus.socket && sudo systemctl start incus'
 
 #### 'No' codes :-(
+alias noblue='sudo systemctl stop bluetooth && sudo systemctl mask bluetooth'
+alias nocock='sudo systemctl stop cockpit.socket'
 alias nopram='sudo umount `pwd`/ramdisk'
 
 #### 'set' commands
@@ -113,6 +119,16 @@ twcall() {
 # twcall "Client Review"
 ###############################################################################
 
+### Git shortcuts
+alias gc='git checkout'
+alias gl='git log'
+alias gl1='git log --all --decorate --oneline --graph'
+alias gr='git rebase'
+alias gss='git status'
+
+#### 'sho' codes
+alias shoisi='sudo tgtadm --lld iscsi --mode target --op show'
+
 #### Misc. aliases
 alias 411='sha256sum'
 alias cat='bat'
@@ -145,6 +161,7 @@ alias vt='v --cmd "set rtp+=./"'
 alias vv='vim $HOME/.config/nvim/init.lua'
 alias work='fc -p'
 alias wtf='btop'
+alias yt='yt-dlp -f "bestvideo+bestaudio/best" --merge-output-format mp4'
 alias za='zellij attach'
 alias zl='zellij'
 alias zll='zellij ls'
