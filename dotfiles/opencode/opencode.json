@@ -105,5 +105,8 @@
         "bash": "ask"
       }
     }
-  }
+  },
+  "plugin": [
+    ".opencode/plugins/graphify.js"
+  ]
 }

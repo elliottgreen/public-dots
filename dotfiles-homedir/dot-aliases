@@ -3,8 +3,9 @@
 alias goblue='sudo systemctl unmask bluetooth && sudo systemctl start bluetooth'
 alias gocock='sudo systemctl start cockpit.socket'
 alias gocups='sudo systemctl start ahavi-daemon && sudo systemctl start cups'
-alias goram='sudo mount -t ramfs -o size=512m ramfs $HOME/working/ramdisk && sudo chown -R `whoami`:`whoami` $HOME/working/ramdisk'
 alias goinc='sudo systemctl start incus.socket && sudo systemctl start incus'
+alias goram='sudo mount -t ramfs -o size=512m ramfs $HOME/working/ramdisk && sudo chown -R `whoami`:`whoami` $HOME/working/ramdisk'
+alias gostash='systemctl --user start llamastash-tunnel'
 
 #### 'No' codes :-(
 alias noblue='sudo systemctl stop bluetooth && sudo systemctl mask bluetooth'
