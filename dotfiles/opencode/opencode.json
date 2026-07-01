@@ -1,112 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  // Active defaults:
-  // - Big reasoning/build/review model: Qwen3.6 28B
-  // - Small planning/shell/reporting model: Qwen3 14B
-  // - Alternate planning model: Gemma 4 21B
-  //
-  // Current LlamaStash model mapping:
-  //   Big model:   llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0
-  //   Small model: llamastash/Qwen3-14B-Q4_K_M
-  //   Gemma alt:   llamastash/gemma-4-21b-a4b-it-REAP-Q4_K_M
-  //
-  // LlamaStash proxy endpoint:
-  //   http://127.0.0.1:11435/v1
-  //
-  // Verify model IDs with Nushell:
-  //   ^curl -fsS http://127.0.0.1:11435/v1/models | from json | get data.id
-  "model": "llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0",
-  "small_model": "llamastash/Qwen3-14B-Q4_K_M",
-  "default_agent": "build-local",
   "provider": {
-    "llamastash": {
+    "dmr": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LlamaStash",
+      "name": "Local DMR",
       "options": {
-        "baseURL": "http://127.0.0.1:11435/v1"
+        "baseURL": "http://localhost:8888/v1"
       },
       "models": {
-        "Qwen3.6-28B-REAP20-A3B-Q8_0": {
-          "name": "Qwen3.6 28B REAP20 A3B Q8_0",
-          "limit": {
-            "context": 32768,
-            "output": 4096
-          }
+        "qwen3 .6B": {
+          "name": "docker.io/ai/qwen3"
         },
-        "Qwen3-14B-Q4_K_M": {
-          "name": "Qwen3 14B Q4_K_M",
-          "limit": {
-            "context": 16384,
-            "output": 2048
-          }
+        "Gemma": {
+          "name": "ai/gemma4"
+        }
         },
-        "gemma-4-21b-a4b-it-REAP-Q4_K_M": {
-          "name": "Gemma 4 21B A4B IT REAP Q4_K_M",
-          "limit": {
-            "context": 4096,
-            "output": 1024
-          }
+        "smolllm2": {
+          "name": "ai/smolllm2"
         }
       }
     }
-  },
-  "agent": {
-    "build-local": {
-      "description": "Primary local implementation agent using the larger Qwen reasoning model.",
-      "mode": "primary",
-      "model": "llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0",
-      "permission": {
-        "edit": "allow",
-        "bash": "ask"
-      }
-    },
-    "plan-local": {
-      "description": "Local planning and shell-work agent using the smaller Qwen model.",
-      "mode": "primary",
-      "model": "llamastash/Qwen3-14B-Q4_K_M",
-      "permission": {
-        "edit": "deny",
-        "bash": "ask"
-      }
-    },
-    "shell-worker-local": {
-      "description": "Bounded zsh/devops worker for safe command planning, repo inspection, reports, and dashboard rendering.",
-      "mode": "subagent",
-      "model": "llamastash/Qwen3-14B-Q4_K_M",
-      "permission": {
-        "edit": "ask",
-        "bash": "ask"
-      }
-    },
-    "explore-local": {
-      "description": "Read-only repository exploration and summarization using the smaller Qwen model.",
-      "mode": "subagent",
-      "model": "llamastash/Qwen3-14B-Q4_K_M",
-      "permission": {
-        "edit": "deny",
-        "bash": "ask"
-      }
-    },
-    "review-local": {
-      "description": "Higher-quality implementation review using the larger Qwen model.",
-      "mode": "subagent",
-      "model": "llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0",
-      "permission": {
-        "edit": "deny",
-        "bash": "ask"
-      }
-    },
-    "plan-gemma-local": {
-      "description": "Alternate planning agent using Gemma 4 21B.",
-      "mode": "primary",
-      "model": "llamastash/gemma-4-21b-a4b-it-REAP-Q4_K_M",
-      "permission": {
-        "edit": "deny",
-        "bash": "ask"
-      }
-    }
-  },
-  "plugin": [
-    ".opencode/plugins/graphify.js"
-  ]
+  }
 }
