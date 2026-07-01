@@ -14,7 +14,7 @@ source "$ZINIT_HOME/zinit.zsh"
 [[ -f ~/.aliases ]] && source ~/.aliases
 
 # Include commands file
-[[ -f ~/pkgs/public-dots/scripts/commands ]] && source ~/pkgs/public-dots/scripts/commands
+[[ -f ~/working/repos/public-dots/scripts/commands ]] && source ~/working/repos/public-dots/scripts/commands
 
 # Zsh plugins
 zinit light zsh-users/zsh-syntax-highlighting
