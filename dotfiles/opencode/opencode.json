@@ -14,9 +14,22 @@
         "Gemma": {
           "name": "ai/gemma4"
         }
-        },
-        "smolllm2": {
-          "name": "ai/smolllm2"
+      },
+      "smolllm2": {
+        "name": "ai/smolllm2"
+      }
+    }
+  },
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "gemma4:e4b": {
+          "name": "Gemma4 e4b"
         }
       }
     }
