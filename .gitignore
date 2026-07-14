@@ -1,0 +1,114 @@
+# -------------------------------------------------------------------
+# Python
+# -------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+
+# uv / poetry lock files and caches
+.uv/
+.uv_cache/
+.uv_lock/
+
+# Pip wheel cache
+pip-wheel-metadata/
+*.whl
+
+# Build directories
+build/
+dist/
+.eggs/
+.installed.cfg
+
+# -------------------------------------------------------------------
+# Test and coverage artifacts
+# -------------------------------------------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# -------------------------------------------------------------------
+# Project-specific
+# -------------------------------------------------------------------
+# Temporary output from bootstrap or fake dirs
+tmp/
+tmp_*/
+*.tmp
+*.bak
+*.swp
+.DS_Store
+.idea/
+.vscode/
+.cache/
+*.lock
+*.pid
+
+# pytest numbered dirs
+pytest-of-*/
+tests/__pycache__/
+
+# Package lists or generated config
+.env
+.env.*
+secrets/
+*.key
+*.pem
+
+# -------------------------------------------------------------------
+# OS-specific
+# -------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# -------------------------------------------------------------------
+# Quarto / documentation (future)
+# -------------------------------------------------------------------
+_site/
+.ipynb_checkpoints/
+.qmd-cache/
+*.qmd~
+
+#---------------------- 
+# Block because not needed
+#---------------------- 
+dotfiles-homedir/dot-gnupg/trustdb.gpg
+dotfiles-homedir/dot-gnupg/pubring.kbx
+dotfiles-homedir/dot-gnupg/reader_0.status
+dotfiles-homedir/dot-gnupg/random_seed
+dotfiles/nvim/lazy-lock.json
+
+
+

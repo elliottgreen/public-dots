@@ -122,6 +122,7 @@ twcall() {
 
 ### Git shortcuts
 alias gc='git checkout'
+alias gsd='git submodule foreach --recursive git status "echo $displaypath git status --short"'
 alias gl='git log'
 alias gl1='git log --all --decorate --oneline --graph'
 alias gr='git rebase'
