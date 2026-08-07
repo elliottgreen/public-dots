@@ -115,13 +115,19 @@ Run as the new user (or use `sudo -u <username>`):
 
 ```bash
 cd dots
-stow -t ~/.config dotfiles
+stow -n -v --no-folding -t ~/.config dotfiles
+stow --no-folding -t ~/.config dotfiles
 ```
+
+Use `--no-folding` so Stow creates real directories under `~/.config` with symlinked contents instead of folding whole config directories into single symlinks. This makes it easier to layer another Stow-managed repository into the same config tree. For example, `dotfiles/opencode` can own `~/.config/opencode/opencode.json` while another repository owns additional files under `~/.config/opencode/skills/`.
+
+Stow can merge directories, but it will still stop on real file conflicts. Preview with `stow -n -v --no-folding` before applying if another repository also contributes to the same config directory.
 
 Then steps 4 & 5 again for dots that have to be in the home folder:
 ```bash
 cd dots-home
-stow -t ~ --dotfiles dotfiles-homedir
+stow -n -v --no-folding -t ~ --dotfiles dotfiles-homedir
+stow --no-folding -t ~ --dotfiles dotfiles-homedir
 ```
 
 Note: after initial setup, run this:
@@ -143,4 +149,3 @@ $ gpg --import keys/{current-public-key.asc}
 $ gpg --card-status
 $ gpg --list-secret-keys --keyid-format long
 ```
-
