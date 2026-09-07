@@ -15,7 +15,7 @@
   //
   // Verify model IDs with Nushell:
   //   ^curl -fsS http://127.0.0.1:11435/v1/models | from json | get data.id
-  "model": "llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0",
+  "model": "llamastash/Qwen3.8-27b-Q8_0",
   "small_model": "llamastash/Qwen3-14B-Q4_K_M",
   "default_agent": "build-local",
   "provider": {
@@ -26,25 +26,18 @@
         "baseURL": "http://127.0.0.1:11435/v1"
       },
       "models": {
-        "Qwen3.6-28B-REAP20-A3B-Q8_0": {
-          "name": "Qwen3.6 28B REAP20 A3B Q8_0",
+        "Qwen3.8-27b-Q8_0": {
+          "name": "Qwen3.8 27b BF16",
           "limit": {
-            "context": 32768,
+            "context": 41101,
             "output": 4096
           }
         },
-        "Qwen3-14B-Q4_K_M": {
-          "name": "Qwen3 14B Q4_K_M",
+        "MiniCPM5-2B-F16": {
+          "name": "MiniCPM5 2B",
           "limit": {
-            "context": 16384,
+            "context": 41100,
             "output": 2048
-          }
-        },
-        "gemma-4-21b-a4b-it-REAP-Q4_K_M": {
-          "name": "Gemma 4 21B A4B IT REAP Q4_K_M",
-          "limit": {
-            "context": 4096,
-            "output": 1024
           }
         }
       }
@@ -54,7 +47,7 @@
     "build-local": {
       "description": "Primary local implementation agent using the larger Qwen reasoning model.",
       "mode": "primary",
-      "model": "llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0",
+      "model": "llamastash/Qwen3.8-27b-Q8_0",
       "permission": {
         "edit": "allow",
         "bash": "ask"
@@ -63,7 +56,7 @@
     "plan-local": {
       "description": "Local planning and shell-work agent using the smaller Qwen model.",
       "mode": "primary",
-      "model": "llamastash/Qwen3-14B-Q4_K_M",
+      "model": "llamastash/MiniCPM5-2B-F16",
       "permission": {
         "edit": "deny",
         "bash": "ask"
@@ -72,7 +65,7 @@
     "shell-worker-local": {
       "description": "Bounded zsh/devops worker for safe command planning, repo inspection, reports, and dashboard rendering.",
       "mode": "subagent",
-      "model": "llamastash/Qwen3-14B-Q4_K_M",
+      "model": "llamastash/MiniCPM5-2B-F16",
       "permission": {
         "edit": "ask",
         "bash": "ask"
@@ -81,7 +74,7 @@
     "explore-local": {
       "description": "Read-only repository exploration and summarization using the smaller Qwen model.",
       "mode": "subagent",
-      "model": "llamastash/Qwen3-14B-Q4_K_M",
+      "model": "llamastash/MiniCPM5-2B-F16",
       "permission": {
         "edit": "deny",
         "bash": "ask"
@@ -90,16 +83,7 @@
     "review-local": {
       "description": "Higher-quality implementation review using the larger Qwen model.",
       "mode": "subagent",
-      "model": "llamastash/Qwen3.6-28B-REAP20-A3B-Q8_0",
-      "permission": {
-        "edit": "deny",
-        "bash": "ask"
-      }
-    },
-    "plan-gemma-local": {
-      "description": "Alternate planning agent using Gemma 4 21B.",
-      "mode": "primary",
-      "model": "llamastash/gemma-4-21b-a4b-it-REAP-Q4_K_M",
+      "model": "llamastash/Qwen3.8-27b-Q8_0",
       "permission": {
         "edit": "deny",
         "bash": "ask"
