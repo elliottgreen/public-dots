@@ -179,4 +179,3 @@ alias yt='yt-dlp -f "bestvideo+bestaudio/best" --merge-output-format mp4'
 alias za='zellij attach'
 alias zl='zellij'
 alias zll='zellij ls'
-

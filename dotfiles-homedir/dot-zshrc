@@ -35,6 +35,8 @@ bindkey '^j' history-search-forward
 bindkey '^ ' autosuggest-accept
 
 # Load the completions ('zsh-completions' plugin)
+# Prefer local completion fixes over package-provided definitions.
+fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
 autoload -U compinit && compinit
 
 # Keep history of commands 
@@ -80,4 +82,3 @@ export PATH="$HOME/.local/bin:$PATH"
 # export LANG=en_US.UTF-8
 # export LC_ALL=en_US.UTF-8
 # export XDG_RUNTIME_DIR=/tmp/runtime-$USER
-
