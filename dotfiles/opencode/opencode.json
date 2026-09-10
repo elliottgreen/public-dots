@@ -90,6 +90,13 @@
       }
     }
   },
+  "mcp": {
+    "structurizr": {
+      "type": "remote",
+      "url": "http://127.0.0.1:3000/mcp",
+      "enabled": true
+    }
+  },
   "plugin": [
     ".opencode/plugins/graphify.js"
   ]
