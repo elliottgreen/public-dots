@@ -1,22 +1,19 @@
 // graphify OpenCode plugin
-// Injects a knowledge graph reminder before bash tool calls when the graph exists.
-import { existsSync } from "fs";
-import { join } from "path";
+// Adds a lightweight reminder when a repository already has graphify output.
+import { existsSync } from "node:fs"
+import { join } from "node:path"
 
-export const GraphifyPlugin = async ({ directory }) => {
-  let reminded = false;
+const reminder =
+  "[graphify] This project has a knowledge graph at graphify-out/. " +
+  'For focused architecture/file-relationship questions, prefer `graphify query "<question>"` ' +
+  "for a scoped subgraph instead of grepping raw files. Read GRAPH_REPORT.md only for broad architecture context."
 
-  return {
-    "tool.execute.before": async (input, output) => {
-      if (reminded) return;
-      if (!existsSync(join(directory, "graphify-out", "graph.json"))) return;
-
-      if (input.tool === "bash") {
-        output.args.command =
-          'echo "[graphify] knowledge graph at graphify-out/. For focused questions, run \`graphify query \"<question>\"\` (scoped subgraph, usually much smaller than GRAPH_REPORT.md) instead of grepping raw files. Read GRAPH_REPORT.md only for broad architecture context." && ' +
-          output.args.command;
-        reminded = true;
-      }
-    },
-  };
-};
+export default {
+  id: "local.graphify-reminder",
+  setup(ctx) {
+    ctx.session.hook("context", (event) => {
+      if (!existsSync(join(ctx.location.directory, "graphify-out", "graph.json"))) return
+      event.system.push({ type: "text", text: reminder })
+    })
+  },
+}
