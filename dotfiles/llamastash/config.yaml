@@ -10,17 +10,18 @@ theme: macchiato
 # Update this to wherever you keep your local GGUF models.
 model_paths:
   - /mnt/models/gguf
+  - /external/models
 
 # Cache discovery.
 # Keep Hugging Face/Ollama enabled if you use those caches.
 # Disable LM Studio unless you actually use it.
 disable_default_cache_paths:
-  huggingface: false
-  ollama: false
+  huggingface: true
+  ollama: true
   lm_studio: true
 
 # Set true only if all models are in model_paths and you do not want cache scanning.
-disable_scan: false
+disable_scan: true
 
 # Internal llama-server launch port range.
 port_range:
@@ -123,3 +124,12 @@ arch_defaults:
     cache_type_v: q8_0
     mlock: false
     no_mmap: false
+
+  granite:
+    ctx-size: 8192
+    n-gpu-layers: auto
+    parallel: 1
+    threads: 6
+    batch-size: 1024
+    ubatch-size: 256
+    reasoning: false
