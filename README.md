@@ -129,14 +129,32 @@ stow -n -v --no-folding -t ~ --dotfiles dotfiles-homedir
 stow --no-folding -t ~ --dotfiles dotfiles-homedir
 ```
 
-Note: after initial setup, run this:
-```{sh}
-$ uv run -m arch_bootstrap:repo
-```
-```
+### Register Git hooks for automatic restow
+
+This repo includes a tracked `post-merge` hook in `.githooks/`. Register it once
+per clone so `git pull` automatically reruns Stow when files under `dotfiles/` or
+`dotfiles-homedir/` change:
+
+```bash
+git config core.hooksPath .githooks
 ```
 
-This will register the githooks repo locally and then the hook will update stow after each pull. 
+Verify it is registered:
+
+```bash
+git config --get core.hooksPath
+git config --show-origin --get core.hooksPath
+```
+
+Expected output should include `.githooks`. This is plain Git configuration and
+works on any distro as long as Git and GNU Stow are installed.
+
+If you need to force a restow manually, run:
+
+```bash
+stow --no-folding -t ~/.config dotfiles
+stow --no-folding -t ~ --dotfiles dotfiles-homedir
+```
 
 
 ### 6 Setup GPG 
