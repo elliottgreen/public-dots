@@ -1,0 +1,306 @@
+#compdef vd visidata
+
+# Local workaround for VisiData 3.4 zsh completion generation; remove after an
+# upstream release escapes apostrophes in option help text.
+
+(( $+functions[_vd_files] )) ||
+_vd_files () {
+  case $PREFIX in
+    (*) _files $* ;;
+  esac
+  case $PREFIX in
+    (+) _message -e 'toplevel:subsheet:col:row' ;;
+    (+<1->) _message -e 'toplevel' ;;
+    (+<1->:) _message -e 'subsheet' ;;
+    (+<1->:<1->:) _message -e 'col' ;;
+    (+<1->:<1->:<1->:) _message -e 'row' ;;
+  esac
+}
+
+_arguments -S \
+    --visidata_dir'[directory to load and store additional files (default: /build/.config/visidata)]:str:_files' \
+    --debug'[exit on error and display stacktrace (default: False)]' \
+    --disp_menu'[show menu on top line when not active (default: True)]' \
+    --disp_menu_keys'[show keystrokes inline in submenus (default: True)]' \
+    --color_menu'[color of menu items in general (default: black on 68 blue)]:str' \
+    --color_menu_active'[color of active menu items (default: 223 yellow on black)]:str' \
+    --color_menu_spec'[color of sheet-specific menu items (default: black on 34 green)]:str' \
+    --color_menu_help'[color of helpbox (default: black italic on 68 blue)]:str' \
+    --disp_menu_boxchars'[box characters to use for menus (default: ││──┌┐└┘├┤)]:str' \
+    --disp_menu_more'[command submenu indicator (default: »)]:str' \
+    --disp_menu_push'[indicator if command pushes sheet onto sheet stack (default: ⎘)]:str' \
+    --disp_menu_input'[indicator if input required for command (default: …)]:str' \
+    --disp_menu_fmt'[right-side menu format string (default: | VisiData {vd.version} | {vd.motd})]:str' \
+    --undo'[enable undo/redo (default: True)]' \
+    --disp_float_fmt'[default fmtstr to format float values (default: {:.2f})]:str' \
+    --disp_int_fmt'[default fmtstr to format int values (default: {:d})]:str' \
+    --col_cache_size'[max number of cache entries in each cached column (default: 0)]:int' \
+    --disp_formatter'[formatter to create the text in each cell (also used by text savers) (default: generic)]:str' \
+    --disp_displayer'[displayer to render the text in each cell (default: generic)]:str' \
+    --disp_note_none'[visible contents of a cell whose value is None (default: ⌀)]:str' \
+    --disp_truncator'[indicator that the contents are only partially visible (default: …)]:str' \
+    --disp_oddspace'[displayable character for odd whitespace (default: ·)]:str' \
+    --disp_more_left'[header note indicating more columns to the left (default: <)]:str' \
+    --disp_more_right'[header note indicating more columns to the right (default: >)]:str' \
+    --disp_error_val'[displayed contents for computation exception (default: )]:str' \
+    --disp_ambig_width'[width to use for unicode chars marked ambiguous (default: 1)]:int' \
+    --disp_pending'[string to display in pending cells (default: )]:str' \
+    --disp_note_pending'[note to display for pending cells (default: :)]:str' \
+    --disp_note_fmtexc'[cell note for an exception during formatting (default: ?)]:str' \
+    --disp_note_getexc'[cell note for an exception during computation (default: !)]:str' \
+    --disp_note_typeexc'[cell note for an exception during type conversion (default: !)]:str' \
+    --color_note_pending'[color of note in pending cells (default: bold green)]:str' \
+    --color_note_type'[color of cell note for non-str types in anytype columns (default: 226 yellow)]:str' \
+    --color_note_row'[color of row note on left edge (default: 220 yellow)]:str' \
+    --scroll_incr'[amount to scroll with scrollwheel (default: -3)]:int' \
+    --disp_column_sep'[separator between columns (default: │)]:str' \
+    --disp_keycol_sep'[separator between key columns and rest of columns (default: ║)]:str' \
+    --disp_rowtop_sep'[ (default: │)]:str' \
+    --disp_rowmid_sep'[ (default: ⁝)]:str' \
+    --disp_rowbot_sep'[ (default: ⁝)]:str' \
+    --disp_rowend_sep'[ (default: ║)]:str' \
+    --disp_keytop_sep'[ (default: ║)]:str' \
+    --disp_keymid_sep'[ (default: ║)]:str' \
+    --disp_keybot_sep'[ (default: ║)]:str' \
+    --disp_endtop_sep'[ (default: ║)]:str' \
+    --disp_endmid_sep'[ (default: ║)]:str' \
+    --disp_endbot_sep'[ (default: ║)]:str' \
+    --disp_selected_note'[ (default: •)]:str' \
+    --disp_sort_asc'[characters for ascending sort (default: ↑↟⇞⇡⇧⇑)]:str' \
+    --disp_sort_desc'[characters for descending sort (default: ↓↡⇟⇣⇩⇓)]:str' \
+    --color_default'[the default fg and bg colors (default: white on black)]:str' \
+    --color_default_hdr'[color of the column headers (default: bold white on black)]:str' \
+    --color_bottom_hdr'[color of the bottom header row (default: underline white on black)]:str' \
+    --color_current_row'[color of the cursor row (default: reverse)]:str' \
+    --color_current_col'[color of the cursor column (default: bold on 232)]:str' \
+    --color_current_cell'[color of current cell, if different from color_current_row+color_current_col (default: )]:str' \
+    --color_current_hdr'[color of the header for the cursor column (default: bold reverse)]:str' \
+    --color_column_sep'[color of column separators (default: white on black)]:str' \
+    --color_key_col'[color of key columns (default: 81 cyan)]:str' \
+    --color_hidden_col'[color of hidden columns on metasheets (default: 8)]:str' \
+    --color_selected_row'[color of selected rows (default: 215 yellow)]:str' \
+    --color_clickable'[color of internally clickable item (default: bold)]:str' \
+    --color_code'[color of code sample (default: bold white on 237)]:str' \
+    --color_heading'[color of header (default: bold black on yellow)]:str' \
+    --color_guide_unwritten'[color of unwritten guides in GuideGuide (default: 243 on black)]:str' \
+    --force_256_colors'[use 256 colors even if curses reports fewer (default: False)]' \
+    --quitguard'[confirm before quitting modified sheet (default: False)]' \
+    --default_width'[default column width (default: 20)]:int' \
+    --default_height'[default column height (default: 4)]:int' \
+    --name_joiner'[string to join sheet or column names (default: _)]:str' \
+    --value_joiner'[string to join display values (default:  )]:str' \
+    --max_rows'[number of rows to load from source (default: 1000000000)]:int' \
+    {--textwrap_cells,--disp_wrap_max_lines}'[max lines for multiline view (default: 3)]:int' \
+    --disp_wrap_break_long_words'[break words longer than column width in multiline (default: True)]' \
+    --disp_wrap_replace_whitespace'[replace whitespace with spaces in multiline (default: False)]' \
+    --disp_wrap_placeholder'[multiline string to indicate truncation (default: …)]:str' \
+    --disp_multiline_focus'[only multiline cursor row (default: True)]' \
+    --color_multiline_bottom'[color of bottom line of multiline rows (default: )]:str' \
+    --color_aggregator'[color of aggregator summary on bottom row (default: bold 255 white on 240 black)]:str' \
+    --disp_splitwin_pct'[height of second sheet on screen (default: 0)]:int' \
+    --disp_rstatus_fmt'[right-side status format string (default: {sheet.threadStatus} {sheet.keystrokeStatus}   \[:longname_status\]{sheet.longname}\[/\]  {sheet.nRows:9d} {sheet.rowtype} {sheet.modifiedStatus}{sheet.selectedStatus}{vd.replayStatus}{vd.sidebarStatus})]:str' \
+    --disp_status_fmt'[left-side status format string (default: {sheet.sheetlist}| )]:str' \
+    --disp_lstatus_max'[maximum length of left status line (default: 0)]:int' \
+    --disp_status_sep'[separator between statuses (default: │)]:str' \
+    --color_keystrokes'[color of input keystrokes (default: bold white on 237)]:str' \
+    --color_longname_guide'[color of command longnames (default: 237)]:str' \
+    --color_longname_status'[color of command longnames (default: white)]:str' \
+    --color_keys'[color of keystrokes in help (default: bold reverse)]:str' \
+    --color_status'[status line color (default: bold on 238)]:str' \
+    --color_error'[error message color (default: 202 1)]:str' \
+    --color_warning'[warning message color (default: 166 15)]:str' \
+    --color_top_status'[top window status bar color (default: underline)]:str' \
+    --color_active_status'[active window status bar color (default: black on 68 blue)]:str' \
+    --color_inactive_status'[inactive window status bar color (default: 8 on black)]:str' \
+    --color_highlight_status'[color of highlighted elements in statusbar (default: black on green)]:str' \
+    --wrap'[wrap text to fit window width on TextSheet (default: False)]' \
+    --save_filetype'[specify default file type to save as (default: tsv)]:str' \
+    --profile'[enable profiling on threads (default: False)]' \
+    --min_memory_mb'[minimum memory to continue loading and async processing (default: 0)]:int' \
+    --max_threads'[maximum number of concurrent processes on DirSheet (default: 10)]:int' \
+    --color_working'[color of system running smoothly (default: 118 5)]:str' \
+    --encoding'[encoding passed to codecs.open when reading a file (default: utf-8-sig)]:str' \
+    --encoding_errors'[encoding_errors passed to codecs.open (default: surrogateescape)]:str' \
+    --tmp_prefix'[prefix for temporary files and directories (default: visidata-)]:str' \
+    {-y,--confirm}'[confirm interactive prompts {a=ask|y=yes} (default: a)]:str' \
+    --color_edit_unfocused'[display color for unfocused input in form (default: 238 on 110)]:str' \
+    --color_edit_cell'[cell color to use when editing cell (default: 233 on 110)]:str' \
+    --disp_edit_fill'[edit field fill character (default: _)]:str' \
+    --disp_unprintable'[substitute character for unprintables (default: ·)]:str' \
+    --mouse_interval'[max time between press/release for click (ms) (default: 1)]:int' \
+    --disp_date_fmt'[default fmtstr passed to strftime for date values (default: %Y-%m-%d)]:str' \
+    --bulk_select_clear'[clear selected rows before new bulk selections (default: False)]' \
+    --some_selected_rows'[if no rows selected, if True, someSelectedRows returns all rows; if False, fails (default: False)]' \
+    --regex_skip'[regex of lines to skip in text sources (default: )]:str' \
+    --regex_flags'[flags to pass to re.compile() \[AILMSUX\] (default: I)]:str' \
+    --load_lazy'[load subsheets always (False) or lazily (True) (default: False)]' \
+    --skip'[skip N rows before header (default: 0)]:int' \
+    --header'[parse first N rows as column names (default: 1)]:int' \
+    {-d,--delimiter}'[field delimiter to use for tsv/csv filetype (default: 	)]:str' \
+    --row_delimiter'[row delimiter to use for tsv/csv filetype (default: 
+)]:str' \
+    --tsv_safe_newline'[replacement for newline character when saving to tsv (default: )]:str' \
+    --tsv_safe_tab'[replacement for tab character when saving to tsv (default: )]:str' \
+    --visibility'[visibility level (default: 0)]:int' \
+    --default_sample_size'[number of rows to sample for regex.split (0=all) (default: 100)]:int' \
+    --fmt_expand_dict'[format str to use for names of columns expanded from dict (colname, key) (default: %s.%s)]:str' \
+    --fmt_expand_list'[format str to use for names of columns expanded from list (colname, index) (default: %s\[%s\])]:str' \
+    --json_indent'[indent to use when saving json (default: None)]:NoneType' \
+    --json_sort_keys'[sort object keys when saving to json (default: False)]' \
+    --json_ensure_ascii'[ensure ascii encode when saving json (default: True)]' \
+    --default_colname'[column name to use for non-dict rows (default: )]:str' \
+    {-f,--filetype}'[input filetype; overrides file extension (default: )]:str' \
+    --safe_error'[error string to use while saving (default: #ERR)]:str' \
+    --save_encoding'[encoding passed to codecs.open when saving a file (default: utf-8)]:str' \
+    --disp_currency_fmt'[default fmtstr to format for currency values (default: %.02f)]:str' \
+    --color_currency_neg'[color for negative values in currency displayer (default: red)]:str' \
+    {--force_valid_colnames,--clean_names}'[clean column/sheet names to be valid Python identifiers (default: False)]' \
+    {-w,--replay_wait}'[time to wait between replayed commands, in seconds (default: 0.0)]:float' \
+    --replay_ignore_errors'[continue replay on error instead of aborting (default: False)]' \
+    --disp_replay_play'[status indicator for active replay (default: ▶)]:str' \
+    --disp_replay_record'[status indicator for macro record (default: ⏺)]:str' \
+    --color_status_replay'[color of replay status indicator (default: green)]:str' \
+    --rowkey_prefix'[string prefix for rowkey in the cmdlog (default: キ)]:str' \
+    --clipboard_copy_cmd'[command to copy stdin to system clipboard (default: xclip -selection clipboard -filter)]:str' \
+    --clipboard_paste_cmd'[command to send contents of system clipboard to stdout (default: xclip -selection clipboard -o)]:str' \
+    --fancy_chooser'[use nicer selection interface for aggregators and jointype (default: False)]' \
+    --null_value'[a value to be counted as null (default: None)]:NoneType' \
+    --disp_histogram'[histogram element character (default: ■)]:str' \
+    --histogram_bins'[number of bins for histogram of numeric columns (default: 0)]:int' \
+    --numeric_binning'[bin numeric columns into ranges (default: False)]' \
+    {--show_graph_labels,--disp_graph_labels}'[show axes and legend on graph (default: True)]' \
+    --plot_colors'[list of distinct colors to use for plotting distinct objects (default: green red yellow cyan magenta white 38 136 168)]:str' \
+    --disp_canvas_charset'[charset to render 2x4 blocks on canvas (default: ⠀⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿⡀⡁⡂⡃⡄⡅⡆⡇⡈⡉⡊⡋⡌⡍⡎⡏⡐⡑⡒⡓⡔⡕⡖⡗⡘⡙⡚⡛⡜⡝⡞⡟⡠⡡⡢⡣⡤⡥⡦⡧⡨⡩⡪⡫⡬⡭⡮⡯⡰⡱⡲⡳⡴⡵⡶⡷⡸⡹⡺⡻⡼⡽⡾⡿⢀⢁⢂⢃⢄⢅⢆⢇⢈⢉⢊⢋⢌⢍⢎⢏⢐⢑⢒⢓⢔⢕⢖⢗⢘⢙⢚⢛⢜⢝⢞⢟⢠⢡⢢⢣⢤⢥⢦⢧⢨⢩⢪⢫⢬⢭⢮⢯⢰⢱⢲⢳⢴⢵⢶⢷⢸⢹⢺⢻⢼⢽⢾⢿⣀⣁⣂⣃⣄⣅⣆⣇⣈⣉⣊⣋⣌⣍⣎⣏⣐⣑⣒⣓⣔⣕⣖⣗⣘⣙⣚⣛⣜⣝⣞⣟⣠⣡⣢⣣⣤⣥⣦⣧⣨⣩⣪⣫⣬⣭⣮⣯⣰⣱⣲⣳⣴⣵⣶⣷⣸⣹⣺⣻⣼⣽⣾⣿)]:str' \
+    {--disp_pixel_random,--disp_graph_pixel_random}'[randomly choose attr from set of pixels instead of most common (default: False)]' \
+    {--zoom_incr,--disp_zoom_incr}'[amount to multiply current zoomlevel when zooming (default: 2.0)]:float' \
+    --color_graph_hidden'[color of legend for hidden attribute (default: 238 blue)]:str' \
+    --color_graph_selected'[color of selected graph points (default: bold)]:str' \
+    --color_graph_axis'[color for graph axis labels (default: bold)]:str' \
+    --disp_graph_tick_x'[character for graph x-axis ticks (default: ╵)]:str' \
+    {--color_refline,--color_graph_refline}'[color for graph reference value lines (default: )]:str' \
+    --disp_graph_reflines_x_charset'[charset to render vertical reference lines on graph (default: ▏││▕)]:str' \
+    --disp_graph_reflines_y_charset'[charset to render horizontal reference lines on graph (default: ▔──▁)]:str' \
+    --disp_graph_multiple_reflines_char'[char to render multiple parallel reflines (default: ▒)]:str' \
+    --motd_url'[source of randomized startup messages (default: https://visidata.org/motd-3.4)]:str:_urls' \
+    {-r,--dir_depth}'[folder recursion depth on DirSheet (default: 0)]:int' \
+    --dir_hidden'[load hidden files on DirSheet (default: False)]' \
+    --active_procs'[number of concurrent processes on DirSheet (default: 10)]:int' \
+    {-c,--config}'[config file to exec in Python (default: /build/.visidatarc)]:visidata.path.Path:_files' \
+    {-p,--play}'[file.vdj to replay (default: )]:str:_files' \
+    {-b,--batch}'[replay in batch mode (with no interface and all status sent to stdout) (default: False)]' \
+    {-o,--output}'[save the final visible sheet to output at the end of replay (default: None)]:NoneType:_files' \
+    {--of,--output_filetype}'[filetype for output path; overrides file extension (default: )]:str' \
+    {-O,--output_cell}'[output the cursor cell display value at exit (default: None)]:NoneType' \
+    {--guides,--preplay}'[longnames to preplay before replay (default: )]:str' \
+    --imports'[imports to preload before .visidatarc (command-line only) (default: plugins)]:str' \
+    {-N,--nothing}'[no config, no plugins, nothing extra (default: False)]' \
+    {-i,--interactive}'[run interactive mode after batch replay (default: False)]' \
+    --s3_anon'[run S3 in anonymous mode (default: False)]' \
+    --disp_help_flags'[list of helper features to enable (space-separated):
+    - "cmdpalette": exec-longname suggestions
+    - "guides": guides in sidebar
+    - "help": help sidebar collapsed by default
+    - "hints": context-sensitive hints on menu line
+    - "inputfield": context-sensitive help for each input field
+    - "inputkeys": input quick reference in sidebar
+    - "nometacols": hide expert columns on metasheets
+    - "sidebar": context-sensitive sheet help in sidebar
+    - "all": enable all helper features (default: cmdpalette guides help hints inputfield inputkeys nometacols sidebar)]:str' \
+    --color_readonly'[color for readonly columns (default: on 52)]:str' \
+    --color_add_pending'[color for rows pending add (default: green)]:str' \
+    --color_change_pending'[color for cells pending modification (default: reverse yellow)]:str' \
+    --color_delete_pending'[color for rows pending delete (default: red)]:str' \
+    {--readonly,--overwrite}'[allow overwriting existing files {c=check|n=no/readonly} (default: c)]:str' \
+    --disp_sidebar'[whether to display sidebar (default: True)]' \
+    --disp_sidebar_fmt'[format string for default sidebar (default: )]:str' \
+    --disp_sidebar_width'[max width for sidebar (default: 0)]:int' \
+    --disp_sidebar_height'[max height for sidebar (default: 0)]:int' \
+    --color_sidebar'[base color of sidebar (default: black on 114 blue)]:str' \
+    --color_sidebar_title'[color of sidebar title (default: black on yellow)]:str' \
+    --disp_boxchars'[box characters (ls rs ts bs tl tr bl br) (default: ▐▌▄█▗▖▐▌)]:str' \
+    --plugins_autoload'[do not autoload plugins if False (default: True)]' \
+    --theme'[display/color theme to use (default: )]:str' \
+    --color_match'[color for matching chars in palette chooser (default: red)]:str' \
+    --airtable_auth_token'[Airtable API key from https://airtable.com/account (default: )]:str' \
+    --matrix_token'[matrix API token (default: )]:str' \
+    --matrix_user_id'[matrix user ID associated with token (default: )]:str' \
+    --matrix_device_id'[device ID associated with matrix login (default: VisiData)]:str' \
+    --reddit_client_id'[client_id for reddit API (default: )]:str' \
+    --reddit_client_secret'[client_secret for reddit API (default: )]:str' \
+    --reddit_user_agent'[user_agent for reddit API (default: VisiData v3.4)]:str' \
+    --zulip_batch_size'[number of messages to fetch per call (<0 to fetch before anchor) (default: -100)]:int' \
+    --zulip_anchor'[message id to start fetching from (default: 1000000000)]:int' \
+    --zulip_delay_s'[seconds to wait between calls (0 to stop after first) (default: 1e-05)]:float' \
+    --zulip_api_key'[API key for Zulip (default: )]:str' \
+    --zulip_email'[email address for use with Zulip API key (default: )]:str' \
+    --csv_dialect'[dialect passed to csv.reader (default: excel)]:str' \
+    --csv_delimiter'[delimiter passed to csv.reader (default: ,)]:str' \
+    --csv_doublequote'[quote-doubling setting passed to csv.reader (default: True)]' \
+    --csv_quotechar'[quotechar passed to csv.reader (default: ")]:str' \
+    --csv_quoting'[quoting style passed to csv.reader and csv.writer (default: 0)]:int' \
+    --csv_skipinitialspace'[skipinitialspace passed to csv.reader (default: True)]' \
+    --csv_escapechar'[escapechar passed to csv.reader (default: None)]:NoneType' \
+    --csv_lineterminator'[lineterminator passed to csv.writer (default: 
+)]:str' \
+    --safety_first'[sanitize input/output to handle edge cases, with a performance cost (default: False)]' \
+    --color_f5log_mon_up'[color of f5log monitor status up (default: green)]:str' \
+    --color_f5log_mon_down'[color of f5log monitor status down (default: red)]:str' \
+    --color_f5log_mon_unknown'[color of f5log monitor status unknown (default: blue)]:str' \
+    --color_f5log_mon_checking'[color of monitor status checking (default: magenta)]:str' \
+    --color_f5log_mon_disabled'[color of monitor status disabled (default: black)]:str' \
+    --color_f5log_logid_alarm'[color of alarms (default: red)]:str' \
+    --color_f5log_logid_warn'[color of warnings (default: yellow)]:str' \
+    --color_f5log_logid_notice'[color of notice (default: cyan)]:str' \
+    --color_f5log_logid_info'[color of info (default: green)]:str' \
+    --f5log_object_regex'[regex to apply to the object name. Useful where object names have a structure to extract. Use the (?P<foo>...) named groups form to get column names. (default: None)]:NoneType' \
+    --f5log_log_year'[override the default year used for log parsing. Use all four digits of the year (e.g., 2022). By default (None) use the year from the ctime of the file, or failing that the current year. (default: None)]:NoneType' \
+    --f5log_log_timezone'[timezone of the source file (default: UTC)]:str' \
+    --fixed_rows'[number of rows to check for fixed width columns (default: 1000)]:int' \
+    --fixed_maxcols'[max number of fixed-width columns to create (0 is no max) (default: 0)]:int' \
+    --graphviz_edge_labels'[whether to include edge labels on graphviz diagrams (default: True)]' \
+    --grep_base_dir'[base directory for relative paths opened with sysopen-row (default: None)]:NoneType' \
+    --hdf5_matrix_enumerate'[enumerate matrix rows and columns (default: False)]' \
+    --html_title'[table header when saving to html (default: <h2>{sheet.name}</h2>)]:str' \
+    --http_max_next'[max next.url pages to follow in http response (default: 0)]:int' \
+    --http_req_headers'[http headers to send to requests (default: User-Agent=VisiData v3.4)]:dict' \
+    --http_ssl_verify'[verify host and certificates for https (default: True)]' \
+    --npy_allow_pickle'[numpy allow unpickling objects (unsafe) (default: False)]' \
+    --npy_matrix_enumerate'[enumerate matrix rows and columns (default: False)]' \
+    --pcap_internet'[(y/s/n) if save_dot includes all internet hosts separately (y), combined (s), or does not include the internet (n) (default: n)]:str:(y s n)' \
+    --pdf_tables'[parse PDF for tables instead of pages of text (default: False)]' \
+    --postgres_schema'[desired schema for the Postgres database (default: public)]:str' \
+    --s3_endpoint'[alternate S3 endpoint, used for local testing or alternative S3-compatible services (default: )]:str' \
+    --s3_glob'[enable glob-matching for S3 paths (default: True)]' \
+    --s3_version_aware'[show all object versions in a versioned bucket (default: False)]' \
+    --sqlite_onconnect'[sqlite statement to execute after opening a connection (default: )]:str' \
+    --xlsx_meta_columns'[include columns for cell objects, font colors, and fill colors (default: False)]' \
+    --xlsx_color_cells'[color cells based on xlsx source (default: True)]' \
+    --xml_parser_huge_tree'[allow very deep trees and very long text content (default: True)]' \
+    --xml_parser_recover'[try hard to parse through broken XML (default: True)]' \
+    --color_xword_active'[color of active clue (default: green)]:str' \
+    --plt_marker'[matplotlib.markers (default: .)]:str' \
+    --color_cmdpalette'[base color of command palette (default: black on 72)]:str' \
+    --disp_cmdpal_max'[max number of suggestions for command palette (default: 10)]:int' \
+    --plot_palette'[colorbrewer palette to use (default: Set3)]:str' \
+    --server_addr'[IP address to listen for commands (default: 127.0.0.1)]:str' \
+    --server_port'[port to listen for commands (default: 0)]:int' \
+    --server_socket'[path to Unix domain socket to listen for commands (takes precedence over server_port) (default: )]:str' \
+    --server_cursor_width'[max display width per cell in cursor row echo (default: 200)]:int' \
+    --fixer_api_key'[API key for api.apilayer.com/fixer (default: )]:str' \
+    --fixer_cache_days'[how long to cache currency conversions, in days (default: 1)]:int' \
+    --describe_aggrs'[numeric aggregators to calculate on Describe sheet (default: mean stdev)]:str' \
+    --highlight_search'[whether to highlight strings in searches (default: True)]' \
+    --color_highlight_search'[color to use for highlighting search results (default: 21 blue on 15 white)]:str' \
+    --incr_base'[start value for column increments (default: 1.0)]:float' \
+    --ping_count'[send this many pings to each host (default: 3)]:int' \
+    --ping_interval'[wait between ping rounds, in seconds (default: 0.1)]:float' \
+    --regex_maxsplit'[maxsplit to pass to regex.split (default: 0)]:int' \
+    --rename_cascade'[cascade column renames into expressions (default: False)]' \
+    {--disp_scrolloff,--disp_scroll_context}'[minimum number of lines to keep visible above/below cursor when scrolling (default: 0)]:int' \
+    --faker_locale'[default locale to use for Faker (default: en_US)]:str' \
+    --faker_extra_providers'[list of additional Provider classes to load via add_provider() (default: None)]:NoneType' \
+    --faker_salt'[make fakes deterministic, when seed string is non-empty (default: )]:str' \
+    --disp_sparkline'[characters to display sparkline (default: ▁▂▃▄▅▆▇)]:str' \
+    {--mimetype,--mailcap_mimetype}'[force mimetype for sysopen-mailcap (default: )]:str' \
+    --unfurl_empty'[if unfurl includes rows for empty containers (default: False)]' \
+  '(-p --play -w --replay-wait -b --batch -o --output --replay-movement)*:file:_vd_files'
