@@ -15,10 +15,10 @@ Your plan makes perfect sense — you can do each of those steps manually withou
 Assuming your package list is named `packages.txt` and has one package per line:
 
 ```bash
-pacman -Syu --needed --noconfirm /
+pacman -Syu --needed --noconfirm \
 $(grep -v '^#' package-lists/pkglist-base.txt | xargs)
 ```
-
+https://github.com/elliottgreen/public-dots.git
 🟢 **Explanation**
 
 * `grep -v '^#'` skips comments or blank lines.
@@ -59,7 +59,6 @@ Paru is the *current* best method to install AUR packages.
 You'll need cargo to compile it, so install the **rust** package first. 
 
 ```bash
-pacman -S rust
 su {user created earlier}
 git clone https://aur.archlinux.org/paru.git
 cd paru

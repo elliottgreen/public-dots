@@ -4,6 +4,7 @@ eza
 fzf
 ghostty
 git
+github-cli
 gitleaks
 glow
 just
@@ -11,6 +12,7 @@ lazygit
 neovim
 nushell
 openssh
+rust
 stow
 systemctl-tui
 task
