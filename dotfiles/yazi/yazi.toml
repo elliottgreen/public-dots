@@ -1,0 +1,37 @@
+# Yazi general configuration
+# Docs: https://yazi-rs.github.io/docs/configuration/yazi
+
+# --- Openers -------------------------------------------------------------
+
+# VisiData: interactive data exploration TUI (csv, tsv, json, excel, sqlite, parquet)
+[opener]
+visidata = [
+  { run = "visidata %s1", block = true, desc = "Open in VisiData" },
+]
+
+# --- Open rules ----------------------------------------------------------
+#
+# Only the FIRST matching rule applies to a file (prepend_rules > defaults
+# > append_rules), and its `use` list is the full set of openers:
+#   - the first entry is the default opener (plain "o")
+#   - every entry shows up in the interactive opener (Shift+O, "open --interactive")
+#
+# So to offer VisiData as an option for a type, the rule for that type must
+# prepend (default "text/*" etc. would otherwise shadow it), and list all
+# openers to keep in the menu.
+
+[open]
+prepend_rules = [
+  # Comma / tab separated text
+  { url = "*.csv", use = ["edit", "visidata", "reveal"] },
+  { url = "*.tsv", use = ["edit", "visidata", "reveal"] },
+  # JSON (file(1) reports .jsonl as application/x-ndjson, so match by name)
+  { url = "*.json", use = ["edit", "visidata", "reveal"] },
+  { url = "*.jsonl", use = ["edit", "visidata", "reveal"] },
+  # Spreadsheets: keep xdg-open (LibreOffice) as default
+  { url = "*.{xlsx,xlsm,xls,ods}", use = ["open", "visidata", "reveal"] },
+  # Databases & columnar: VisiData is the sensible default here
+  { url = "*.sqlite*", use = ["visidata", "open", "reveal"] },
+  { url = "*.{db,duckdb}", use = ["visidata", "open", "reveal"] },
+  { url = "*.parquet", use = ["visidata", "open", "reveal"] },
+]
