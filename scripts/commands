@@ -70,12 +70,17 @@ start_ansible_agent() {
 #     source /path/to/fw-helpers-commented
 #
 # Note:
-#   These functions are thin wrappers around 'nft'. They do not do argument
-#   validation yet, so they expect a sensible value in $1.
+#   These functions are thin wrappers around 'nft'. The port helpers
+#   (fw-open, fw-close, fw-open-udp, fw-close-udp) validate their arguments
+#   and accept one or more ports. The egress helpers still expect a sensible
+#   value in $1.
 #
 #   Examples:
 #     fw-open 8888
+#     fw-open 8888 9000 9001
+#     fw-open-udp 5353 1900
 #     fw-close 8888
+#     fw-close-udp 5353 1900
 #     fw-egress-open 10.10.10.23
 #     fw-egress-close 10.10.10.23
 
@@ -117,10 +122,48 @@ fw-reload() {
   sudo nft -f /etc/nftables.conf
 }
 
-# Temporarily expose a TCP port on the workstation to systems on your LAN.
+# Validate one or more port arguments and print them as a comma-separated
+# list (the format 'nft add element' expects for multiple set elements).
 #
 # What it does:
-#   Adds the provided TCP port number to the nftables set:
+#   Checks that every argument is an integer port in the range 1-65535,
+#   removes duplicates, and prints them joined by commas.
+#
+# Why this exists:
+#   Shared argument validation for the fw-open / fw-close port helpers.
+#   Internal helper - the other fw-* functions are the public interface.
+#
+# Examples:
+#   _fw-ports 8888 9000   ->  8888,9000
+#   _fw-ports abc         ->  error on stderr, returns 1
+_fw-ports() {
+  if (( $# < 1 )); then
+    print -u2 "❌ no ports given (expected at least one port number, e.g. 8888 9000)"
+    return 1
+  fi
+
+  local ports=() p
+  for p in "$@"; do
+    # Reject non-numeric input, more than 5 digits, and out-of-range ports.
+    # 10# forces base 10 so a leading zero is not read as octal; the
+    # normalized decimal value is what gets passed to nft.
+    if [[ ! $p =~ ^[0-9]+$ ]] || (( ${#p} > 5 )) || (( 10#$p < 1 || 10#$p > 65535 )); then
+      print -u2 "❌ '$p' is not a valid port (expected 1-65535)"
+      return 1
+    fi
+    ports+=("$(( 10#$p ))")
+  done
+
+  # De-duplicate (order-preserving), then join with commas for nft
+  ports=( ${(@u)ports} )
+  local IFS=,
+  print -r "${ports[*]}"
+}
+
+# Temporarily expose one or more TCP ports on the workstation to your LAN.
+#
+# What it does:
+#   Adds the provided TCP port numbers, all at once, to the nftables set:
 #     inet workstation temp_lan_tcp
 #
 # Why this matters:
@@ -132,33 +175,106 @@ fw-reload() {
 #   a demo web UI, or a test API, and want another machine on your local
 #   network to reach it.
 #
-# Example:
+# Examples:
 #   fw-open 8888
+#   fw-open 8888 9000 9001
 #
-# After that, a trusted LAN client can connect to the workstation on TCP/8888
-# if the service is actually listening there.
+# After that, a trusted LAN client can connect to the workstation on those
+# TCP ports if the services are actually listening there.
+# For UDP ports, use fw-open-udp instead.
 fw-open() {
-  sudo nft add element inet workstation temp_lan_tcp "{ $1 }"
+  local ports
+  ports=$(_fw-ports "$@") || return 1
+  sudo nft add element inet workstation temp_lan_tcp "{ $ports }" &&
+    echo "🔓 opened TCP: ${ports//,/, }"
 }
 
-# Remove a previously opened temporary TCP port from LAN access.
+# Temporarily expose one or more UDP ports on the workstation to your LAN.
 #
 # What it does:
-#   Deletes the provided TCP port number from the nftables set:
-#     inet workstation temp_lan_tcp
+#   Adds the provided UDP port numbers, all at once, to the nftables set:
+#     inet workstation temp_udp_services
 #
 # Why this matters:
-#   This closes a temporary inbound exception that was previously added with
+#   The INPUT chain uses that set to decide which inbound UDP ports should be
+#   reachable from trusted LAN addresses. This affects traffic TO the host.
+#
+# Typical use case:
+#   A temporary service that speaks UDP (VoIP, a game server, a custom
+#   daemon) that you want another machine on your local network to reach.
+#
+# Examples:
+#   fw-open-udp 5353
+#   fw-open-udp 5353 1900
+#
+# For TCP ports, use fw-open instead.
+fw-open-udp() {
+  local ports
+  ports=$(_fw-ports "$@") || return 1
+  sudo nft add element inet workstation temp_udp_services "{ $ports }" &&
+    echo "🔓 opened UDP: ${ports//,/, }"
+}
+
+# Remove one or more previously opened temporary TCP ports from LAN access.
+#
+# What it does:
+#   Deletes the provided TCP port numbers from the nftables set:
+#     inet workstation temp_lan_tcp
+#   Ports are removed one at a time so that a port which was never open does
+#   not prevent the others from being closed (a single multi-element delete
+#   would fail atomically if any one element is missing).
+#
+# Why this matters:
+#   This closes temporary inbound exceptions that were previously added with
 #   fw-open. This affects traffic TO the host.
 #
 # Typical use case:
 #   You are done using Jupyter, a dashboard, or another temporary service and
 #   want to return to the default deny posture for inbound LAN access.
 #
-# Example:
+# Examples:
 #   fw-close 8888
+#   fw-close 8888 9000 9001
+#
+# For UDP ports, use fw-close-udp instead.
 fw-close() {
-  sudo nft delete element inet workstation temp_lan_tcp "{ $1 }"
+  _fw-ports "$@" > /dev/null || return 1
+  local p
+  for p in "$@"; do
+    if sudo nft delete element inet workstation temp_lan_tcp "{ $p }"; then
+      echo "🔒 closed TCP: $p"
+    else
+      print -u2 "⚠️  TCP: $p was not open (or could not be removed)"
+    fi
+  done
+}
+
+# Remove one or more previously opened temporary UDP ports from LAN access.
+#
+# What it does:
+#   Deletes the provided UDP port numbers from the nftables set:
+#     inet workstation temp_udp_services
+#   Same one-at-a-time behavior as fw-close (see its docs).
+#
+# Why this matters:
+#   This closes temporary inbound UDP exceptions that were previously added
+#   with fw-open-udp. This affects traffic TO the host.
+#
+# Examples:
+#   fw-close-udp 5353
+#   fw-close-udp 5353 1900
+#
+# For TCP ports, use fw-close instead.
+fw-close-udp() {
+  _fw-ports "$@" > /dev/null || return 1
+  local p
+  for p in "$@"; do
+    if sudo nft delete element inet workstation temp_udp_services "{ $p }"; then
+      echo "🔒 closed UDP: $p"
+    else
+      print -u2 "⚠️  UDP: $p was not open (or could not be removed)"
+    fi
+  done
 }
 
 # Show the current nftables workstation table.
@@ -242,12 +358,12 @@ fw-egress-close() {
 
 fw-cast-open() {
   # Allow multicast discovery traffic (Chromecast, etc.)
-  sudo nft add element inet workstation temp_udp_services "{ 5353, 1900 }"
+  fw-open-udp 5353 1900
 }
 
 fw-cast-close() {
   # Remove multicast discovery allowance
-  sudo nft delete element inet workstation temp_udp_services "{ 5353, 1900 }"
+  fw-close-udp 5353 1900
 }
 
 fw-off() {
